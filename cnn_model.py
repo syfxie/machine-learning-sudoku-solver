@@ -12,13 +12,13 @@ from keras.layers import Dropout
 
 # create CNN model
 # multiple classes involved => use softmax for probability distribution
-class SudokuCNN:
+class ImageCNN:
     # method that doesn't require an instance of SudokuBoard to be accessd
     # no "self" parameter required
     @staticmethod
     # all dimensions are of MNIST digits (pixels and grayscale channels)
     # classes = number of digits to recognize (0-9)
-    def built(width, height, depth, classes):
+    def build_model(width, height, depth, classes):
         # initilize sequential model (stack of layers)
         model = Sequential()
         # input shape for first layer of OCR model
@@ -44,13 +44,18 @@ class SudokuCNN:
         model.add(Flatten())
         model.add(Dense(64))
         model.add(Activation('relu'))
+        # 50% dropout
+        model.add(Dropout(0.5))
 
         # FC2
         model.add(Dense(64))
         model.add(Activation('relu'))
+        model.add(Dropout(0.5))
 
         # head
+        # softmax classifier
         model.add(Dense(classes))
+        model.add(Activation('softmax'))
 
         return model
 
