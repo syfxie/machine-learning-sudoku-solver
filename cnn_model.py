@@ -1,5 +1,4 @@
-import cv2
-from tensorflow import keras
+
 # create layer by layer CNN model
 from keras.models import Sequential
 from keras.layers import Dense
@@ -12,7 +11,7 @@ from keras.layers import Dropout
 
 # create CNN model
 # multiple classes involved => use softmax for probability distribution
-class ImageCNN:
+class SudokuModel:
     # method that doesn't require an instance of SudokuBoard to be accessd
     # no "self" parameter required
     @staticmethod
@@ -26,19 +25,22 @@ class ImageCNN:
 
         # incrementally building the rest of the CNN model
 
-        # first layer: RELU and Max pooling
-        # first layer requires input shape
+        # first stack:
+
+        # convolution layer (set input shape)
         model.add(Conv2D(filters=32, kernel_size=(5, 5), padding="same", input_shape=inputShape))
+        # RELU layer
         model.add(Activation('relu'))
+        # max pooling layer
         # sharpen the feature map
-        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
 
         # second layer: RELU and Max pooling
         model.add(Conv2D(filters=32, kernel_size=(3, 3), padding="same"))
         model.add(Activation('relu'))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
 
-        # build FC laters
+        # build FC layers
         # FC1
         # flatten to one-dimensional layer
         model.add(Flatten())
@@ -51,10 +53,8 @@ class ImageCNN:
         model.add(Dense(64))
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
-
-        # head
-        # softmax classifier
         model.add(Dense(classes))
+        # softmax classifier
         model.add(Activation('softmax'))
 
         return model
