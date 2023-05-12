@@ -12,7 +12,7 @@ from keras.layers import Dropout
 
 # create CNN model
 # multiple classes involved => use softmax for probability distribution
-class SudokuBoard:
+class SudokuCNN:
     # method that doesn't require an instance of SudokuBoard to be accessd
     # no "self" parameter required
     @staticmethod
