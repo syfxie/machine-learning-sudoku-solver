@@ -1,12 +1,11 @@
 import tensorflow
-# create layer by layer CNN model
 from keras.models import Sequential
-from keras.layers import Dense
-# spatial convolution over images
+# import requirements to build convolution layers
 from keras.layers import Conv2D
 from keras.layers import Activation
 from keras.layers import MaxPooling2D
 from keras.layers import Flatten
+from keras.layers import Dense
 from keras.layers import Dropout
 
 # create CNN model
@@ -24,9 +23,6 @@ class SudokuModel:
         inputShape = (height, width, depth)
 
         # incrementally building the rest of the CNN model
-
-        # first stack:
-
         # convolution layer (set input shape)
         model.add(Conv2D(filters=32, kernel_size=(5, 5), padding="same", input_shape=inputShape))
         # RELU layer

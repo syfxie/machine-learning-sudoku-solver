@@ -1,45 +1,44 @@
-from cnn_model import SudokuModel
-from tensorflow import keras
+# import model
+from model import SudokuModel
+
 # digits database
-from keras.datasets import mnist     
-from keras import callbacks    
-from keras import optimizers 
-from sklearn.metrics import classification_report
+from keras.datasets import mnist    
+from keras import callbacks
+# using the Adam optimizer for computational efficiency and saving memory
+from keras.optimizers import Adam
 from sklearn.preprocessing import LabelBinarizer
+from sklearn.metrics import classification_report
 import argparse
 
-# look up optimizers
-
-# create parser
+# this programs will take one argument: the path to the trined digit classification model
+# initialize parser
 parser = argparse.ArgumentParser()
-parser.add_argument("-m", "--model", required=True, help="input path to trained model")
-# parse arguments
+# add the "model" argument
+parser.add_argument("-m", "--model", required=True, help="input path to trained digit classification model")
+# turn parsed cmd line argument into a Python dictionary
 args = vars(parser.parse_args())
+print(args)
 
-# initialize hyperparameters
+# INITIALIZE HYPERPARAMETERS
 # learning rate
-LEARNING_RATE = 0.01       # note: try different learning rates
+LEARNING_RATE = 0.01
 # training epochs
 EPOCHS = 10
 # batch size
-BATCH_SIZE = 64
-
-# configure optimal learning rate
-# option 1: add diagnostic plot of loss over training epochs
-# option 2: sensitivity analysis/grid search
+BATCH_SIZE = 100
 
 # https://www.geeksforgeeks.org/choose-optimal-number-of-epochs-to-train-a-neural-network-in-keras/
 # earlystopping = callbacks.EarlyStopping(monitor="val_loss", mode="min", patience=5, restore_best_weights=True)
 
-# RETRIEVE MNIST DATASET
+# load mnist dataset
 ((X_train, y_train), (X_test, y_test)) = mnist.load_data()
 
 # reshape data
-# each image is reshaped into a 28x28x1 shape (28x28 and grayscale)
+# each image is reshaped into a 28x28x1 shape (28x28 & grayscale)
 X_train = X_train.reshape((X_train.shape[0], 28, 28, 1))
-X_test = X_test.reshape((X_test.shapd[0], 28, 28, 1))
+X_test = X_test.reshape((X_test.shape[0], 28, 28, 1))
 
-# scale input features
+# scale input features by converting to floats in range [0, 1]
 X_train = X_train.astype("float32") / 255.0     
 X_test = X_test.astype("float32") / 255.0
 
@@ -47,14 +46,14 @@ X_test = X_test.astype("float32") / 255.0
 y_train = LabelBinarizer.fit_transform(y_train) 
 y_test = LabelBinarizer.fit_transform(y_test)
 
-# initialize optimizer and model
-optimizer = optimizers.Adam(lr=LEARNING_RATE)
+# initialize optimizer
+optimizer = Adam(lr=LEARNING_RATE)
 
-# Initilize CNN model
+# load model to classify digits from 0-9
 model = SudokuModel.build(width=28, height=28, depth=1, classes=10)
-# compile for multi-class classification
+
+# compile model for multi-class classification
 model.compile(loss="categorical_crossentropy", optimizer=optimizer, metrics=["accuracy"])
-# optimizer = optimizers.SGD(lr=LEARNING_RATE)
 
 # fit model on training data
 history = model.fit(X_train, y_train, validation_data=(X_test, y_test), batch_size=BATCH_SIZE, epochs=EPOCHS)
@@ -71,3 +70,11 @@ predictions = model.predict(X_test)
 # serialize
 model.save(args["sudoku_model"], save_format="h5")
 
+# TO-DO: 
+# write tensorboard logs and/or for earlystopping during training
+# print classification report
+# research other optimizers
+# adjust model with different hyperparameters
+    # configure optimal learning rate
+    # option 1: add diagnostic plot of loss over training epochs
+    # option 2: sensitivity analysis/grid search
