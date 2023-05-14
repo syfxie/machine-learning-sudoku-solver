@@ -1,4 +1,4 @@
-
+import tensorflow
 # create layer by layer CNN model
 from keras.models import Sequential
 from keras.layers import Dense
@@ -41,15 +41,12 @@ class SudokuModel:
         model.add(MaxPooling2D(pool_size=(2, 2), strides=2))
 
         # build FC layers
-        # FC1
         # flatten to one-dimensional layer
         model.add(Flatten())
         model.add(Dense(64))
         model.add(Activation('relu'))
         # 50% dropout
         model.add(Dropout(0.5))
-
-        # FC2
         model.add(Dense(64))
         model.add(Activation('relu'))
         model.add(Dropout(0.5))
